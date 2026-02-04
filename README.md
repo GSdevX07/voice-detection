@@ -28,15 +28,13 @@ The system is built using:
 **Endpoint**
 POST /api/voice-detection
 
-markdown
-Copy code
+
 
 **Headers**
 x-api-key: sk_test_123456789
 Content-Type: application/json
 
-css
-Copy code
+
 
 **Request Body**
 ```json
@@ -46,8 +44,8 @@ Copy code
   "audioBase64": "<BASE64_ENCODED_AUDIO>"
 }
 📤 Output Format (API Response)
-json
-Copy code
+
+
 {
   "language": "English",
   "final_classification": "AI_GENERATED",
@@ -60,42 +58,29 @@ Copy code
 }
 ⚙️ How to Run the Project (Judges)
 1️⃣ Create Virtual Environment
-bash
-Copy code
 python -m venv venv
 venv\Scripts\activate
 2️⃣ Install Dependencies
-bash
-Copy code
 pip install -r requirements.txt
 3️⃣ Run API Server
-bash
-Copy code
 cd aasist
 uvicorn api:app --host 0.0.0.0 --port 8000
 4️⃣ Open API Docs
-arduino
-Copy code
 http://127.0.0.1:8000/docs
 🧠 Models Used
 🔹 AASIST
 Deep anti-spoofing neural network
-
 Detects synthetic / converted speech
 
 🔹 Secondary Model (Model-2)
 Trained on mixed human & AI samples
-
 Adds robustness via ensemble decision
 
 🔹 Language Detection
 Powered by OpenAI Whisper
-
 Supports: English, Hindi, Tamil, Telugu, Malayalam
 
 🗂️ Project Structure
-bash
-Copy code
 voice-detection/
 │
 ├── aasist/
@@ -112,9 +97,6 @@ voice-detection/
 ├── README.md
 🔐 API Key Note
 A demo API key is used for hackathon testing:
-
-nginx
-Copy code
 sk_test_123456789
 In production, this should be stored securely (env variable).
 
