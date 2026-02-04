@@ -29,7 +29,7 @@ sys.path.append(PROJECT_ROOT)
 from infer_single import predict
 
 # ---------- CONFIG ----------
-API_KEY = "sk_test_123456789"   # demo key for hackathon
+API_KEY = os.getenv("API_KEY")
 UPLOAD_DIR = "uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
@@ -80,8 +80,8 @@ def analyze_voice(
     x_api_key: str = Header(...)
 ):
     # 🔐 API KEY CHECK
-    if x_api_key != API_KEY:
-        raise HTTPException(status_code=401, detail="Invalid API Key")
+   if not API_KEY or x_api_key != API_KEY:
+    raise HTTPException(status_code=401, detail="Invalid API Key")
 
     # 🎧 Prepare audio
     wav_path = prepare_audio(data.audioBase64, data.audioFormat)
