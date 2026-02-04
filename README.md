@@ -1,158 +1,128 @@
-# AASIST
+# 🎙️ AI Voice Detection API (Deepfake vs Human)
 
-This repository provides the overall framework for training and evaluating audio anti-spoofing systems proposed in ['AASIST: Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks'](https://arxiv.org/abs/2110.01200)
+This project is a **REST API–based AI Voice Detection system** that detects whether a given audio sample is **AI-generated or Human speech**.  
+It also performs **language detection** and returns a structured JSON output as required by the problem statement.
 
-### Getting started
-`requirements.txt` must be installed for execution. We state our experiment environment for those who prefer to simulate as similar as possible. 
-- Installing dependencies
-```
+The system is built using:
+- **AASIST** (state-of-the-art audio anti-spoofing model)
+- **Ensemble Learning** (AASIST + secondary ML model)
+- **Whisper** for language detection
+- **FastAPI** for REST API deployment
+
+---
+
+## 🚀 Features
+
+- ✅ Accepts **Base64 encoded MP3 audio**
+- ✅ Automatically converts MP3 → WAV
+- ✅ Detects **spoken language**
+- ✅ Classifies audio as **AI_GENERATED / HUMAN**
+- ✅ Provides **confidence score**
+- ✅ Returns **model insights**
+- ✅ Fully exposed via **REST API endpoint**
+
+---
+
+## 📥 Input Format (API Request)
+
+**Endpoint**
+POST /api/voice-detection
+
+markdown
+Copy code
+
+**Headers**
+x-api-key: sk_test_123456789
+Content-Type: application/json
+
+css
+Copy code
+
+**Request Body**
+```json
+{
+  "language": "auto",
+  "audioFormat": "mp3",
+  "audioBase64": "<BASE64_ENCODED_AUDIO>"
+}
+📤 Output Format (API Response)
+json
+Copy code
+{
+  "language": "English",
+  "final_classification": "AI_GENERATED",
+  "confidenceScore": 0.96,
+  "modelInsights": [
+    "high pitch consistency",
+    "lack of natural pauses",
+    "vocoder artifacts detected"
+  ]
+}
+⚙️ How to Run the Project (Judges)
+1️⃣ Create Virtual Environment
+bash
+Copy code
+python -m venv venv
+venv\Scripts\activate
+2️⃣ Install Dependencies
+bash
+Copy code
 pip install -r requirements.txt
-```
-- Our environment (for GPU training)
-  - Based on a docker image: `pytorch:1.6.0-cuda10.1-cudnn7-runtime`
-  - GPU: 1 NVIDIA Tesla V100
-    - About 16GB is required to train AASIST using a batch size of 24
-  - gpu-driver: 418.67
+3️⃣ Run API Server
+bash
+Copy code
+cd aasist
+uvicorn api:app --host 0.0.0.0 --port 8000
+4️⃣ Open API Docs
+arduino
+Copy code
+http://127.0.0.1:8000/docs
+🧠 Models Used
+🔹 AASIST
+Deep anti-spoofing neural network
 
-### Data preparation
-We train/validate/evaluate AASIST using the ASVspoof 2019 logical access dataset [4].
-```
-python ./download_dataset.py
-```
-(Alternative) Manual preparation is available via 
-- ASVspoof2019 dataset: https://datashare.ed.ac.uk/handle/10283/3336
-  1. Download `LA.zip` and unzip it
-  2. Set your dataset directory in the configuration file
+Detects synthetic / converted speech
 
-### Training 
-The `main.py` includes train/validation/evaluation.
+🔹 Secondary Model (Model-2)
+Trained on mixed human & AI samples
 
-To train AASIST [1]:
-```
-python main.py --config ./config/AASIST.conf
-```
-To train AASIST-L [1]:
-```
-python main.py --config ./config/AASIST-L.conf
-```
+Adds robustness via ensemble decision
 
-#### Training baselines
+🔹 Language Detection
+Powered by OpenAI Whisper
 
-We additionally enabled the training of RawNet2[2] and RawGAT-ST[3]. 
+Supports: English, Hindi, Tamil, Telugu, Malayalam
 
-To Train RawNet2 [2]:
-```
-python main.py --config ./config/RawNet2_baseline.conf
-```
+🗂️ Project Structure
+bash
+Copy code
+voice-detection/
+│
+├── aasist/
+│   ├── api.py                # FastAPI endpoint
+│   ├── infer_single.py       # Inference pipeline
+│   ├── ensemble_detector.py # Ensemble logic
+│   ├── models/               # AASIST weights
+│
+├── model2/
+│   └── wav2vec_detector.py   # Secondary model
+│
+├── convert_mp3_to_wav.py
+├── requirements.txt
+├── README.md
+🔐 API Key Note
+A demo API key is used for hackathon testing:
 
-To train RawGAT-ST [3]:
-```
-python main.py --config ./config/RawGATST_baseline.conf
-```
+nginx
+Copy code
+sk_test_123456789
+In production, this should be stored securely (env variable).
 
-### Pre-trained models
-We provide pre-trained AASIST and AASIST-L.
+📚 Acknowledgements & Research Credit
+This project is built on top of the following research work:
 
-To evaluate AASIST [1]:
-- It shows `EER: 0.83%`, `min t-DCF: 0.0275`
-```
-python main.py --eval --config ./config/AASIST.conf
-```
-To evaluate AASIST-L [1]:
-- It shows `EER: 0.99%`, `min t-DCF: 0.0309`
-- Model has `85,306` parameters
-```
-python main.py --eval --config ./config/AASIST-L.conf
-```
+AASIST: Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks
+https://arxiv.org/abs/2110.01200
 
+Original AASIST repository and ASVspoof datasets were used for model design inspiration and benchmarking.
 
-### Developing custom models
-Simply by adding a configuration file and a model architecture, one can train and evaluate their models.
-
-To train a custom model:
-```
-1. Define your model
-  - The model should be a class named "Model"
-2. Make a configuration by modifying "model_config"
-  - architecture: filename of your model.
-  - hyper-parameters to be tuned can be also passed using variables in "model_config"
-3. run python main.py --config {CUSTOM_CONFIG_NAME}
-```
-
-### License
-```
-Copyright (c) 2021-present NAVER Corp.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-```
-
-### Acknowledgements
-This repository is built on top of several open source projects. 
-- [ASVspoof 2021 baseline repo](https://github.com/asvspoof-challenge/2021/tree/main/LA/Baseline-RawNet2)
-- [min t-DCF implementation](https://www.asvspoof.org/resources/tDCF_python_v2.zip)
-
-The repository for baseline RawGAT-ST model will be open
--  https://github.com/eurecom-asp/RawGAT-ST-antispoofing
-
-The dataset we use is ASVspoof 2019 [4]
-- https://www.asvspoof.org/index2019.html
-
-### References
-[1] AASIST: Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks
-```bibtex
-@INPROCEEDINGS{Jung2021AASIST,
-  author={Jung, Jee-weon and Heo, Hee-Soo and Tak, Hemlata and Shim, Hye-jin and Chung, Joon Son and Lee, Bong-Jin and Yu, Ha-Jin and Evans, Nicholas},
-  booktitle={arXiv preprint arXiv:2110.01200}, 
-  title={AASIST: Audio Anti-Spoofing using Integrated Spectro-Temporal Graph Attention Networks}, 
-  year={2021}
-```
-
-[2] End-to-End anti-spoofing with RawNet2
-```bibtex
-@INPROCEEDINGS{Tak2021End,
-  author={Tak, Hemlata and Patino, Jose and Todisco, Massimiliano and Nautsch, Andreas and Evans, Nicholas and Larcher, Anthony},
-  booktitle={Proc. ICASSP}, 
-  title={End-to-End anti-spoofing with RawNet2}, 
-  year={2021},
-  pages={6369-6373}
-}
-```
-
-[3] End-to-end spectro-temporal graph attention networks for speaker verification anti-spoofing and speech deepfake detection
-```bibtex
-@inproceedings{tak21_asvspoof,
-  author={Tak, Hemlata and Jung, Jee-weon and Patino, Jose and Kamble, Madhu and Todisco, Massimiliano and Evans, Nicholas},
-  booktitle={Proc. ASVSpoof Challenge},
-  title={End-to-end spectro-temporal graph attention networks for speaker verification anti-spoofing and speech deepfake detection},
-  year={2021},
-  pages={1--8}
-```
-
-[4] ASVspoof 2019: A large-scale public database of synthesized, converted and replayed speech
-```bibtex
-@article{wang2020asvspoof,
-  title={ASVspoof 2019: A large-scale public database of synthesized, converted and replayed speech},
-  author={Wang, Xin and Yamagishi, Junichi and Todisco, Massimiliano and Delgado, H{\'e}ctor and Nautsch, Andreas and Evans, Nicholas and Sahidullah, Md and Vestman, Ville and Kinnunen, Tomi and Lee, Kong Aik and others},
-  journal={Computer Speech \& Language},
-  volume={64},
-  pages={101114},
-  year={2020},
-  publisher={Elsevier}
-}
-```
