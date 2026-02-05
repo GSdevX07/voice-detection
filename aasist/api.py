@@ -1,10 +1,16 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 import base64
-import os
 import uuid
-import sys
-import subprocess
+
+from aasist.infer_single import predict
+from convert_mp3_to_wav import convert_mp3_to_wav
+
 
 def convert_mp3_to_wav(mp3_path, wav_path):
     subprocess.run(
