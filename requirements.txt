@@ -7,3 +7,5 @@ librosa
 pydub
 openai-whisper
 transformers
+ffmpeg-python
+imageio-ffmpeg
