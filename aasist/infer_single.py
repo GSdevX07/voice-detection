@@ -17,7 +17,7 @@ import librosa
 import numpy as np
 import whisper
 
-from AASIST import Model
+from aasist.models.AASIST import Model
 from data_utils import pad
 from ensemble_detector import ensemble_decision
 from model2.wav2vec_detector import Wav2Vec2DeepfakeDetector
