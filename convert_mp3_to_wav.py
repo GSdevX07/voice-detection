@@ -1,27 +1,26 @@
 import os
 from pydub import AudioSegment
 
-INPUT_ROOT = "train_data_raw_mp3"
-OUTPUT_ROOT = "train_data"
 TARGET_SR = 16000
 
-for root, _, files in os.walk(INPUT_ROOT):
-    for file in files:
-        if not file.lower().endswith(".mp3"):
-            continue
+def convert_mp3_to_wav(input_path: str, output_path: str):
+    """
+    Converts a single MP3 file to WAV (16kHz, mono, 16-bit PCM)
+    """
+    audio = AudioSegment.from_mp3(input_path)
+    audio = audio.set_frame_rate(TARGET_SR)
+    audio = audio.set_channels(1)
+    audio = audio.set_sample_width(2)  # 16-bit PCM
 
-        src_path = os.path.join(root, file)
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    audio.export(output_path, format="wav")
 
-        rel_path = os.path.relpath(root, INPUT_ROOT)
-        dst_dir = os.path.join(OUTPUT_ROOT, rel_path)
-        os.makedirs(dst_dir, exist_ok=True)
+    return output_path
 
-        dst_path = os.path.join(dst_dir, file.replace(".mp3", ".wav"))
 
-        audio = AudioSegment.from_mp3(src_path)
-        audio = audio.set_frame_rate(TARGET_SR)
-        audio = audio.set_channels(1)
-        audio = audio.set_sample_width(2)  # 16-bit PCM
-
-        audio.export(dst_path, format="wav")
-        print("Converted:", dst_path)
+if __name__ == "__main__":
+    # standalone test
+    inp = "test.mp3"
+    out = "test.wav"
+    convert_mp3_to_wav(inp, out)
+    print("Converted:", out)

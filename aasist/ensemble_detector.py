@@ -1,27 +1,44 @@
 def ensemble_decision(aasist_score, wav2vec_score):
     """
-    Simple ensemble logic:
-    +ve score → AI
-    -ve score → Human
+    Security-first ensemble logic:
+    - HUMAN only with extremely strong evidence
+    - Everything else treated as AI or suspected AI
     """
 
     combined_score = 0.6 * aasist_score + 0.4 * wav2vec_score
+    confidence = min(0.5 + abs(combined_score) / 8, 0.99)
 
-    if combined_score > 0:
-        final_label = "AI_GENERATED"
-        confidence = min(0.5 + abs(combined_score) / 10, 0.99)
-        insights = [
-            "high pitch consistency",
-            "lack of natural pauses",
-            "vocoder artifacts detected"
-        ]
-    else:
-        final_label = "HUMAN"
-        confidence = min(0.5 + abs(combined_score) / 10, 0.99)
-        insights = [
-            "natural pitch variation",
-            "presence of micro-pauses",
-            "human-like prosody"
-        ]
+    # 🔥 EXTREMELY STRICT HUMAN RULE
+    if combined_score < -3.5 and confidence > 0.95:
+        return (
+            "HUMAN",
+            round(confidence, 2),
+            [
+                "exceptionally strong human speech patterns",
+                "highly irregular natural timing",
+                "no detectable synthetic artifacts"
+            ]
+        )
 
-    return final_label, round(confidence, 2), insights
+    # 🔥 CLEAR AI
+    if combined_score > 0.5:
+        return (
+            "AI_GENERATED",
+            round(confidence, 2),
+            [
+                "synthetic pitch regularity",
+                "temporal generation artifacts",
+                "vocoder fingerprints detected"
+            ]
+        )
+
+    # 🔥 DEFAULT: DO NOT TRUST
+    return (
+        "SUSPECTED_AI",
+        round(confidence, 2),
+        [
+            "highly human-like but untrusted signal",
+            "possible modern TTS or voice cloning",
+            "manual verification recommended"
+        ]
+    )
