@@ -111,4 +111,3 @@ WebSocket endpoint for real-time chunked audio streaming and active intervention
 ## 📄 License
 This project is released under the **MIT License**.
 
-*(Prepared & Updated for Mentor/Hackathon Evaluation)*
