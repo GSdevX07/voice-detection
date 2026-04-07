@@ -63,21 +63,16 @@ uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 
 ## 📡 API Endpoints
 
-### `POST /api/voice-detection`
-Accepts Base-64 encoded audio or raw text.
+### `POST /api/voice-detection-upload`
+Multipart file upload endpoint for `.mp3` and `.wav` files (Recommended for standard usage).
 
 **Headers:**
 `x-api-key: <your_api_key>` (Defaults to: `sk_test_123456789`)
 
-**Request Payload:**
-```json
-{
-  "input_type": "audio",
-  "audioFormat": "mp3",
-  "audioBase64": "<BASE64_ENCODED_AUDIO>",
-  "sensitivity": "NORMAL"
-}
-```
+**Form Data:**
+*   `audio` (File): The audio file to analyze (`.mp3` or `.wav`)
+*   `language` (String): (Optional) e.g., "auto", "English"
+*   `sensitivity` (String): (Optional) "LOW", "NORMAL", "HIGH"
 
 **Response Payload:**
 ```json
@@ -93,8 +88,20 @@ Accepts Base-64 encoded audio or raw text.
 }
 ```
 
-### `POST /api/voice-detection-upload`
-Multipart file upload endpoint for `.mp3` and `.wav` files.
+### `POST /api/voice-detection`
+Accepts raw text input if you only need the NLP inference (no audio).
+
+**Headers:**
+`x-api-key: <your_api_key>` 
+
+**Request Payload:**
+```json
+{
+  "input_type": "text",
+  "text": "Hello, your grandson is in jail. Please send money.",
+  "sensitivity": "NORMAL"
+}
+```
 
 ### `WS /ws/stream-detection`
 WebSocket endpoint for real-time chunked audio streaming and active intervention.
