@@ -1,4 +1,4 @@
-# 🎙️ AI Voice & Scam Detection API
+#  AI Voice & Scam Detection API
 
 ![Version](https://img.shields.io/badge/version-v2.0-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)
@@ -9,7 +9,7 @@
 
 ---
 
-## 📖 Project Overview
+## Project Overview
 
 As digital interactions increasingly shift towards voice-based communication, the risk of sophisticated voice scams (e.g., virtual kidnappings, grandchild scams) has grown exponentially. Modern cybercriminals leverage advanced AI to generate realistic deepfake voices, bypassing traditional security measures.
 
@@ -28,7 +28,7 @@ The **AI Voice & Scam Detection System** is a comprehensive solution that analyz
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### 1️⃣ Environment Setup
 
@@ -61,7 +61,7 @@ uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 
 ---
 
-## 📡 API Endpoints
+##  API Endpoints
 
 ### `POST /api/voice-detection-upload`
 Multipart file upload endpoint for `.mp3` and `.wav` files (Recommended for standard usage).
@@ -108,7 +108,7 @@ WebSocket endpoint for real-time chunked audio streaming and active intervention
 
 ---
 
-## 🧠 Models Used
+##  Models Used
 
 1. **AASIST:** Deep anti-spoofing neural network for detecting synthetic / converted speech ([AASIST Paper](https://arxiv.org/abs/2110.01200)).
 2. **OpenAI Whisper:** Automatic Speech Recognition (ASR).
